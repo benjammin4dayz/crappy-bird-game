@@ -1,0 +1,78 @@
+html {
+  background-color: #333;
+}
+
+.App {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  border: 1px solid #000;
+  overflow: hidden;
+  background-color: #87ceeb;
+  /* Sky Blue */
+  transition: background-color 0.5s ease;
+}
+
+.game-over {
+  background-color: #ff6347;
+  /* Tomato */
+}
+
+.game-over-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+.bird {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  user-select: none;
+}
+
+.pipe {
+  position: absolute;
+  width: 100px;
+  height: 600px;
+}
+
+.absoluteCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@keyframes star-animation {
+  0% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.1;
+  }
+}
+@keyframes void-animation {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes spin {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
+}
