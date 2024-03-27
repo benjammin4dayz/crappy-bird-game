@@ -4,21 +4,20 @@ html {
 
 .App {
   position: relative;
+  overflow: hidden;
   width: 600px;
   height: 600px;
-  border: 1px solid #000;
-  overflow: hidden;
-  background-color: #87ceeb;
-  /* Sky Blue */
   transition: background-color 0.5s ease;
+  background-color: #87ceeb;
+  border: 1px solid #000;
 }
 
 .game-over {
   background-color: #ff6347;
-  /* Tomato */
 }
 
 .game-over-message {
+  user-select: none;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -29,10 +28,10 @@ html {
 }
 
 .bird {
+  user-select: none;
   position: absolute;
   width: 50px;
   height: 50px;
-  user-select: none;
 }
 
 .pipe {

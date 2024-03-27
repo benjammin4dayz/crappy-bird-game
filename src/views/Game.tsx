@@ -11,7 +11,7 @@ import EasterEgg from '../components/EasterEgg';
 import '../App.css';
 
 const Game: React.FC<{ romanMode?: boolean }> = ({ romanMode }) => {
-  const { bird, gameOver, gameStarted, jump, pipes, setRoman1266Mode } =
+  const { bird, gameOver, gameStarted, jump, pipes, score, setRoman1266Mode } =
     useGameBase();
 
   useEffect(() => {
@@ -27,6 +27,7 @@ const Game: React.FC<{ romanMode?: boolean }> = ({ romanMode }) => {
       className={`App ${gameOver ? 'game-over' : ''}`}
       onClick={romanMode ? () => {} : jump}
     >
+      <h3 style={{ userSelect: 'none' }}>Score: {score}</h3>
       <Bird x={bird.x} y={bird.y} />
       {pipes.map((pipe: GameObstaclePipe, index: number) => (
         <Pipes key={index} x={pipe.x} y={pipe.y} />

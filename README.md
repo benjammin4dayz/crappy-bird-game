@@ -1,5 +1,7 @@
 # Crappy Bird Game
 
-My basic interpretation of "Flappy Bird," using Typescript and React.
+My basic interpretation of "Flappy Bird," built with TypeScript and React.
 
-Create your own by following [this guide](https://www.geeksforgeeks.org/flappy-bird-game-using-react-js/) from "Geeks for Geeks."
+### 🐦 Play Now! [Click Here](https://crappy-bird.pages.dev)
+
+... or create your own, with [this guide](https://www.geeksforgeeks.org/flappy-bird-game-using-react-js)!

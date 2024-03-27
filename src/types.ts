@@ -8,6 +8,8 @@ interface Position {
 }
 
 interface GameActorBird extends Position, Dimensions {}
-interface GameObstaclePipe extends Position, Dimensions {}
+interface GameObstaclePipe extends Position, Dimensions {
+  scored?: boolean;
+}
 
 export type { Dimensions, Position, GameActorBird, GameObstaclePipe };

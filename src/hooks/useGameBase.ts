@@ -61,24 +61,25 @@ const useGameBase = () => {
         birdBottom > pipeTop &&
         birdTop < pipeBottom;
 
+      const pass =
+        birdLeft > pipeLeft && birdRight < pipeRight && birdBottom < pipeBottom;
+
       if (collision) {
-        if (
-          birdLeft > pipeLeft &&
-          birdRight < pipeRight &&
-          birdBottom < pipeBottom
-        ) {
-          // Bird has crashed through the pipe, increase score
-          setScore((prevScore) => prevScore + 1);
-        } else {
-          // Bird has hit the pipe, end the game
-          setGameOver(true);
-          setGameStarted(false);
-        }
+        setGameOver(true);
+        setGameStarted(false);
+      } else if (pass && !pipe.scored) {
+        setScore((prevScore) => prevScore + 1);
+        setPipes((prevPipes) =>
+          prevPipes.map((p) =>
+            p.x === pipe.x && p.y === pipe.y ? { ...p, scored: true } : p
+          )
+        );
       }
     });
 
     // Check if bird is out of the screen vertically
-    // TODO: determine the source of these arbitrary numbers
+    // coffee brain infers that 800 is (GAME_HEIGHT + LOWER_BOUND_LIMIT)
+    // and that -170 is an arbitrary UPPER_BOUND_LIMIT
     if (birdBottom > 800 || birdTop < -170) {
       // Bird is out of bounds, end the game
       setGameOver(true);
@@ -88,13 +89,20 @@ const useGameBase = () => {
 
   useEffect(() => {
     collisionCheck();
-  }, [bird, pipes, gameOver]);
+  }, [bird, gameOver, pipes]);
 
   useEffect(() => {
-    // this is used in every loc that the number 5 was referenced
-    const SINK_RATE = 5;
-    const POLL_RATE = 30;
-    const PIPE_GENERATION_RATE = 2000;
+    const SINK_RATE = 5; // pixels per second
+    const POLL_RATE = 30; // ms
+    // speed at which obstacles advance towards actor (perceived as actor velocity)
+    //
+    const PIPE_VELOCITY = 10; // pixels per second
+    const PIPE_GENERATION_RATE = 2000; // ms
+
+    // width is necessary to generate pipes out of frame
+    // TODO: migrate value to single source of truth
+    //
+    const GAME_WIDTH = 600; // px
 
     const gravity = setInterval(() => {
       setBird((prevBird) => {
@@ -113,9 +121,10 @@ const useGameBase = () => {
           ...prev,
           {
             ...defaultPipeSettings,
-            // TODO: determine the source of these arbitrary numbers
-            x: 400,
-            y: Math.floor(Math.random() * 300),
+            x: GAME_WIDTH,
+            // y=0 is the top of the frame, requires actor to fly outside visible area
+            // applies pressure to stay within the upper bound
+            y: Math.floor(Math.random() * 300 + bird.height / 2),
           },
         ]);
       }
@@ -124,7 +133,7 @@ const useGameBase = () => {
     const pipeMove = setInterval(() => {
       if (!gameOver && gameStarted) {
         setPipes((prev) =>
-          prev.map((pipe) => ({ ...pipe, x: pipe.x - SINK_RATE }))
+          prev.map((pipe) => ({ ...pipe, x: pipe.x - PIPE_VELOCITY }))
         );
       }
     }, POLL_RATE);
@@ -134,16 +143,16 @@ const useGameBase = () => {
       clearInterval(pipeGenerator);
       clearInterval(pipeMove);
     };
-  }, [gameOver, gameStarted, roman1266Mode]);
+  }, [bird.height, gameOver, gameStarted, roman1266Mode]);
 
   return {
     bird,
+    gameOver,
+    gameStarted,
     jump,
     pipes,
-    gameOver,
-    score,
-    gameStarted,
     restartGame,
+    score,
     setJumpHeight,
     setRoman1266Mode,
   };
