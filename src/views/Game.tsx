@@ -1,13 +1,9 @@
 import React, { useEffect } from 'react';
-
-import type { GameObstaclePipe } from '../types';
-
 import useGameBase from '../hooks/useGameBase';
 import Bird from '../components/Bird';
 import Pipes from '../components/Pipes';
-
 import EasterEgg from '../components/EasterEgg';
-
+import type { GameObstaclePipe } from '../types';
 import '../App.css';
 
 const Game: React.FC<{ romanMode?: boolean }> = ({ romanMode }) => {

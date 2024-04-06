@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { GameActorBird, GameObstaclePipe } from '../types';
+import { useState, useEffect, useCallback } from 'react';
+import type { GameActorBird, GameObstaclePipe } from '../types';
 
 const defaultActorSettings: GameActorBird = {
   x: 50,
   y: 200,
   width: 50,
   height: 50,
+  velocity: 10,
+  weight: 5,
 };
 
 const defaultPipeSettings: GameObstaclePipe = {
@@ -15,9 +17,14 @@ const defaultPipeSettings: GameObstaclePipe = {
   height: 600,
 };
 
-const useGameBase = () => {
+const useGameBase = ({
+  gameWidth = 600,
+  gameHeight = 600,
+  updateRate = 30,
+} = {}) => {
   const [bird, setBird] = useState<GameActorBird>(defaultActorSettings);
   const [jumpHeight, setJumpHeight] = useState<number>(60);
+  const [pipeFrequency, setPipeFrequency] = useState<number>(1500);
   const [pipes, setPipes] = useState<GameObstaclePipe[]>([]);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
@@ -43,7 +50,7 @@ const useGameBase = () => {
     }
   };
 
-  const collisionCheck = () => {
+  const collisionCheck = useCallback(() => {
     const birdTop = bird.y;
     const birdBottom = bird.y + bird.height;
     const birdLeft = bird.x;
@@ -78,42 +85,28 @@ const useGameBase = () => {
     });
 
     // Check if bird is out of the screen vertically
-    // coffee brain infers that 800 is (GAME_HEIGHT + LOWER_BOUND_LIMIT)
-    // and that -170 is an arbitrary UPPER_BOUND_LIMIT
-    if (birdBottom > 800 || birdTop < -170) {
+    const bounds = { top: -170, bottom: 200 };
+    if (birdBottom > gameHeight + bounds.bottom || birdTop < bounds.top) {
       // Bird is out of bounds, end the game
       setGameOver(true);
       setGameStarted(false);
     }
-  };
+  }, [bird, gameHeight, pipes]);
 
   useEffect(() => {
     collisionCheck();
-  }, [bird, gameOver, pipes]);
+  }, [collisionCheck]);
 
   useEffect(() => {
-    const SINK_RATE = 5; // pixels per second
-    const POLL_RATE = 30; // ms
-    // speed at which obstacles advance towards actor (perceived as actor velocity)
-    //
-    const PIPE_VELOCITY = 10; // pixels per second
-    const PIPE_GENERATION_RATE = 2000; // ms
-
-    // width is necessary to generate pipes out of frame
-    // TODO: migrate value to single source of truth
-    //
-    const GAME_WIDTH = 600; // px
-
     const gravity = setInterval(() => {
       setBird((prevBird) => {
         // invert the gravity as a callback to a friend :)
         const calculation = roman1266Mode
-          ? prevBird.y - SINK_RATE
-          : prevBird.y + SINK_RATE;
+          ? prevBird.y - bird.weight
+          : prevBird.y + bird.weight;
         return { ...prevBird, y: calculation };
       });
-      collisionCheck();
-    }, POLL_RATE);
+    }, updateRate);
 
     const pipeGenerator = setInterval(() => {
       if (!gameOver && gameStarted) {
@@ -121,29 +114,51 @@ const useGameBase = () => {
           ...prev,
           {
             ...defaultPipeSettings,
-            x: GAME_WIDTH,
+            x: gameWidth,
             // y=0 is the top of the frame, requires actor to fly outside visible area
             // applies pressure to stay within the upper bound
             y: Math.floor(Math.random() * 300 + bird.height / 2),
           },
         ]);
       }
-    }, PIPE_GENERATION_RATE);
+    }, pipeFrequency);
 
     const pipeMove = setInterval(() => {
       if (!gameOver && gameStarted) {
         setPipes((prev) =>
-          prev.map((pipe) => ({ ...pipe, x: pipe.x - PIPE_VELOCITY }))
+          prev.map((pipe) => ({ ...pipe, x: pipe.x - bird.velocity }))
         );
       }
-    }, POLL_RATE);
+    }, updateRate);
+
+    const difficultyScaling = setInterval(() => {
+      // scuffed log scaling
+      const baseVal = 2;
+      const decreaseBy = Math.log(score + 1) * baseVal;
+
+      if (!gameOver && gameStarted) {
+        setPipeFrequency((prev) => Math.max(prev - decreaseBy, 300));
+      }
+    }, pipeFrequency);
 
     return () => {
       clearInterval(gravity);
       clearInterval(pipeGenerator);
       clearInterval(pipeMove);
+      clearInterval(difficultyScaling);
     };
-  }, [bird.height, gameOver, gameStarted, roman1266Mode]);
+  }, [
+    bird.height,
+    bird.velocity,
+    bird.weight,
+    gameOver,
+    gameStarted,
+    gameWidth,
+    pipeFrequency,
+    roman1266Mode,
+    updateRate,
+    score,
+  ]);
 
   return {
     bird,

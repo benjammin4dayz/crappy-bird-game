@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
 import '../App.css';
 
 function getSongData() {
@@ -17,6 +16,7 @@ const EasterEgg: React.FC = () => {
   const [songData, setSongData] = useState<string | null>(null);
   useEffect(() => {
     const audioPlayer = new Audio();
+    audioPlayer.volume = 0.5;
 
     if (!audioPlayer.src && !songData) {
       getSongData().then((b64) => setSongData(b64));

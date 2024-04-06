@@ -7,7 +7,10 @@ interface Position {
   y: number;
 }
 
-interface GameActorBird extends Position, Dimensions {}
+interface GameActorBird extends Position, Dimensions {
+  velocity: number;
+  weight: number;
+}
 interface GameObstaclePipe extends Position, Dimensions {
   scored?: boolean;
 }
