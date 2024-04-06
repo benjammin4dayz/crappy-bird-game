@@ -6,8 +6,9 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "vite || npm run troubleshoot -s",
-    "build": "vite build || npm run troubleshoot -s",
-    "lint": "eslint src/ --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "build": "npm run typecheck && vite build",
+    "lint": "eslint src/ --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "troubleshoot": "echo '\n\u001b[1;31mWARNING: Your app might not work properly. (non-zero exit code)\u001b[0m\n\u001b[1;33m  > Are your frontend dependencies installed correctly?\u001b[0m\n'"
   },
@@ -19,6 +20,8 @@
   "devDependencies": {
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@typescript-eslint/eslint-plugin": "^7.5.0",
+    "@typescript-eslint/parser": "^7.5.0",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.34.1",
