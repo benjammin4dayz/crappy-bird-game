@@ -13,25 +13,25 @@
   },
   "modes": {
     "window": {
-      "title": "Neu-React-Vite App",
-      "width": 800,
-      "height": 500,
-      "minWidth": 400,
-      "minHeight": 200,
+      "title": "Crappy Bird Game",
+      "width": 700,
+      "height": 750,
+      "minWidth": 700,
+      "minHeight": 750,
       "fullScreen": false,
       "icon": "/react-src/public/icon.png",
       "alwaysOnTop": false,
       "enableInspector": false,
       "borderless": false,
       "maximize": false,
-      "resizable": true,
+      "resizable": false,
       "hidden": false,
       "useSavedState": false,
-      "exitProcessOnClose": true
+      "exitProcessOnClose": false
     }
   },
   "cli": {
-    "binaryName": "myapp",
+    "binaryName": "crappy-bird-game",
     "resourcesPath": "/react-src/dist/",
     "extensionsPath": "/extensions/",
     "frontendLibrary": {
